@@ -4,5 +4,6 @@ dist/
 .cache/
 .DS_Store
 *.log
+logs/
 .env
 .env.local

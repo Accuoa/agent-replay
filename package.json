@@ -1,0 +1,26 @@
+{
+  "name": "agent-replay",
+  "version": "0.1.0",
+  "description": "Deterministic agent replay — wrap boundary calls, capture a portable trace, replay byte-identical.",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "agent-replay": "src/cli.mjs"
+  },
+  "scripts": {
+    "start": "node src/cli.mjs",
+    "test": "vitest run",
+    "benchmark": "node benchmark/run.mjs",
+    "lint": "prettier --check ."
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.0",
+    "prettier": "^3.3.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
