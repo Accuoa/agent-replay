@@ -1,0 +1,30 @@
+{"name":"linear-1","result":{"drifts":[],"observed_output":{"fibonacci":1},"ok":true}}
+{"name":"linear-2","result":{"drifts":[],"observed_output":{"fibonacci":1},"ok":true}}
+{"name":"linear-3","result":{"drifts":[],"observed_output":{"fibonacci":2},"ok":true}}
+{"name":"linear-4","result":{"drifts":[],"observed_output":{"fibonacci":3},"ok":true}}
+{"name":"linear-5","result":{"drifts":[],"observed_output":{"fibonacci":5},"ok":true}}
+{"name":"linear-6","result":{"drifts":[],"observed_output":{"fibonacci":8},"ok":true}}
+{"name":"rerecord-1","result":{"drifts":[],"observed_output":{"fibonacci":1},"ok":true}}
+{"name":"rerecord-2","result":{"drifts":[],"observed_output":{"fibonacci":1},"ok":true}}
+{"name":"rerecord-3","result":{"drifts":[],"observed_output":{"fibonacci":2},"ok":true}}
+{"name":"rerecord-4","result":{"drifts":[],"observed_output":{"fibonacci":3},"ok":true}}
+{"name":"rerecord-5","result":{"drifts":[],"observed_output":{"fibonacci":5},"ok":true}}
+{"name":"rerecord-6","result":{"drifts":[],"observed_output":{"fibonacci":8},"ok":true}}
+{"name":"mid-tamper-1","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'sum')"}],"observed_output":null,"ok":false}}
+{"name":"mid-tamper-2","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'action')"}],"observed_output":null,"ok":false}}
+{"name":"mid-tamper-3","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'sum')"}],"observed_output":null,"ok":false}}
+{"name":"mid-tamper-4","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'action')"}],"observed_output":null,"ok":false}}
+{"name":"mid-tamper-5","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'sum')"}],"observed_output":null,"ok":false}}
+{"name":"mid-tamper-6","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'action')"}],"observed_output":null,"ok":false}}
+{"name":"output-tamper-1","result":{"drifts":[{"category":"tail","expected_output":{"fibonacci":999},"observed_output":{"fibonacci":1}}],"observed_output":{"fibonacci":1},"ok":false}}
+{"name":"output-tamper-2","result":{"drifts":[{"category":"tail","expected_output":{"fibonacci":999},"observed_output":{"fibonacci":1}}],"observed_output":{"fibonacci":1},"ok":false}}
+{"name":"output-tamper-3","result":{"drifts":[{"category":"tail","expected_output":{"fibonacci":999},"observed_output":{"fibonacci":2}}],"observed_output":{"fibonacci":2},"ok":false}}
+{"name":"output-tamper-4","result":{"drifts":[{"category":"tail","expected_output":{"fibonacci":999},"observed_output":{"fibonacci":3}}],"observed_output":{"fibonacci":3},"ok":false}}
+{"name":"output-tamper-5","result":{"drifts":[{"category":"tail","expected_output":{"fibonacci":999},"observed_output":{"fibonacci":5}}],"observed_output":{"fibonacci":5},"ok":false}}
+{"name":"output-tamper-6","result":{"drifts":[{"category":"tail","expected_output":{"fibonacci":999},"observed_output":{"fibonacci":8}}],"observed_output":{"fibonacci":8},"ok":false}}
+{"name":"input-tamper-1","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'action')"}],"observed_output":null,"ok":false}}
+{"name":"input-tamper-2","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'action')"}],"observed_output":null,"ok":false}}
+{"name":"input-tamper-3","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'action')"}],"observed_output":null,"ok":false}}
+{"name":"input-tamper-4","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'action')"}],"observed_output":null,"ok":false}}
+{"name":"input-tamper-5","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'action')"}],"observed_output":null,"ok":false}}
+{"name":"input-tamper-6","result":{"drifts":[{"category":"throw","message":"Cannot read properties of null (reading 'action')"}],"observed_output":null,"ok":false}}
