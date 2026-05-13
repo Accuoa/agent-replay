@@ -9,10 +9,179 @@ const content = ContentSchema.parse(contentJson);
 <Landing content={content} pageTitle={`Launching ${content.project.name}`}>
   <article class="prose dark:prose-invert">
     <h1>Launching {content.project.name}</h1>
-    <p data-testid="launch-post-body">
-      Per-project launch post body goes here. The repo scaffolder will fill this in
-      from the project's <code>blog-post.md</code>.
-    </p>
+    <div data-testid="launch-post-body">
+
+      {/* Section 1: Implementer's fictional draft — Aiden rewrites with the real moment before publishing. */}
+      <h2>Why I built this</h2>
+      <p>
+        A few months back I was trying to reproduce a bug in an agent that had run two days earlier
+        in production. Same prompt, same input data. Different output, every time I tried to reproduce
+        it. The agent was making LLM calls (non-deterministic by default), reading the clock (different
+        every call), and calling a tool that hit a third-party API whose response had drifted. Three
+        sources of non-determinism, zero of them isolated.
+      </p>
+      <p>
+        What I wanted was a way to say: "here is the trace of what actually happened that day — re-run
+        the agent's logic against this recorded trace and tell me if my fix changes anything." Not a
+        debugger, not a profiler — just a way to make agent runs reproducible after the fact. The
+        pieces I needed existed (hashing inputs, mocking boundaries) but they weren't packaged as a
+        primitive anyone could pick up and use.
+      </p>
+      <p>
+        <code>agent-replay</code> is that primitive. Wrap your boundary calls in the recorder, get a
+        portable trace. Replay the trace and the agent re-executes against the recorded outputs —
+        byte-identical final output, byte-identical step sequence. The reference implementation includes
+        a tiny toy agent (Fibonacci) and a 30-fixture benchmark that locks 100% replay fidelity in
+        three byte-identical runs.
+      </p>
+
+      <h2>What's broken today</h2>
+      <p>
+        Agent non-determinism is the default, not the exception. An agent that touches an LLM, reads
+        the system clock, generates a random value, or calls any external API is non-deterministic in
+        at least one dimension. In practice, production agents are non-deterministic in three or more.
+      </p>
+      <p>
+        The three core sources are LLM sampling (temperature &gt; 0 means different tokens every run),
+        clock and random (time-based IDs, random seeds, jitter), and network (API responses drift,
+        rate-limit behavior changes, third-party state evolves). None of these is wrong — they're
+        necessary. But zero of them are isolated by default.
+      </p>
+      <p>
+        Current approaches fall into two camps. Logging captures what happened but can't replay it
+        — you get a record, not a runnable trace. Deterministic re-run attempts (fixed seed,
+        replayed prompt) only control the inputs you thought of; the sources you missed still fire
+        live. Screen-capture and session recording tools work at the UI layer and can't reconstruct
+        the agent's internal step sequence. None of these gives you: "re-run the agent's logic
+        exactly as it ran on Tuesday, verify my fix, without touching any live service."
+      </p>
+      <p>
+        The result is that debugging a production agent today means running it again and hoping the
+        non-determinism doesn't matter. Auditing a production run means trusting logs that were
+        written by the same process that had the bug. Neither is good enough as agents move into
+        regulated and high-stakes environments.
+      </p>
+
+      <h2>Spec walkthrough</h2>
+      <p>
+        The spec defines a <strong>Replay Record</strong>: a portable JSON document containing a
+        list of steps (each with a boundary type, recorded input hash, and recorded output), an{' '}
+        <code>input_hash</code> over the agent's initial input, the agent's final output, and an{' '}
+        <code>agent_metadata</code> block (implementation identifier and version). The record is
+        self-contained: everything needed to replay the agent's logic is inside the document.
+      </p>
+      <p>
+        The <strong>recording protocol</strong> has five steps. (1) Hash the agent's input and store
+        it. (2) For each boundary call — any call that is non-deterministic or has external effects —
+        intercept the call before it fires, record the input hash and the live response, advance the
+        step cursor. (3) Capture the agent's final output. (4) Assemble the replay record. (5) Emit
+        the record to a portable JSON file.
+      </p>
+      <p>
+        The <strong>replay protocol</strong> has six steps. (1) Load the replay record. (2) Hash
+        the agent's current input and assert it matches <code>input_hash</code>. (3) Initialize
+        the step cursor at zero. (4) For each boundary call, intercept it, assert the input hash
+        matches the recorded step at cursor, return the recorded output without firing the real
+        call, advance the cursor. (5) Assert cursor equals the total step count (no steps were
+        skipped or added). (6) Assert the agent's final output matches the recorded output
+        byte-for-byte.
+      </p>
+      <p>
+        The spec defines six drift categories that replay can detect: input drift (the agent's
+        input changed), step-count drift (a different number of boundary calls were made), step-order
+        drift (boundary calls were made in a different order), step-input drift (the same boundary
+        call was made with different inputs), output drift (the agent's final output changed), and
+        metadata drift (the agent implementation changed). Each category maps to a distinct error
+        code. Full details in{' '}
+        <a href="https://github.com/Accuoa/agent-replay/blob/main/SPEC.md">SPEC.md</a>.
+      </p>
+      <p>
+        The <strong>determinism contract</strong> is on the implementer: all non-deterministic
+        operations MUST be boundaries. If a non-deterministic call is made outside a boundary
+        wrapper, replay will silently diverge. The spec lists minimum required boundaries: LLM
+        calls, clock reads, random reads, all network calls. Disk reads of external state are
+        recommended boundaries. Pure computation (sorting, hashing, arithmetic) is never a boundary.
+      </p>
+
+      <h2>The numbers</h2>
+      <p>
+        The benchmark runs 30 hand-built fixtures across five categories: linear (happy-path record
+        and replay), rerecord (re-recording produces an identical trace), mid-tamper (a step's
+        recorded output is modified), output-tamper (the final output field is modified), and
+        input-tamper (the initial input hash is modified). Every fixture is labeled; expected
+        behavior (pass or specific drift category) is declared alongside input.
+      </p>
+      <p>
+        Network footprint is audited rather than mocked. The benchmark wraps Node.js{' '}
+        <code>http</code> and <code>https</code> and logs every outbound call to{' '}
+        <code>logs/network.jsonl</code>. The final assertion is that the file is empty. It is.
+        Determinism is verified by running the engine three times with identical inputs and comparing
+        outputs byte-for-byte. All three runs produce identical results. Calibration
+        SHA-256:{' '}<code>7C0BF8021A4FC922F4594523202522A917CC963CBB660DE2016F98DC8DB2D8D7</code>.
+      </p>
+      <p>
+        "Strong band" requires 100% fidelity across all five categories, zero external calls, and
+        three byte-identical runs. The 30-fixture count is honest — it is not a massive corpus. But
+        the methodology is: every fixture is hand-built, every category is labeled, the output is
+        deterministic, and you can reproduce it with nothing beyond <code>node</code>.
+      </p>
+
+      <h2>Try it</h2>
+      <pre><code>{`agent-replay record src/toy-agent-cli-adapter.mjs examples/input-fibonacci.json > rec.json
+agent-replay verify src/toy-agent-cli-adapter.mjs rec.json
+agent-replay diff rec.json rec-modified.json`}</code></pre>
+      <p>
+        Or run the full cycle in one command from the repo root:
+      </p>
+      <pre><code>bash full-cycle.sh</code></pre>
+      <p>
+        <code>full-cycle.sh</code> installs dependencies, runs the test suite (57/57), runs the
+        benchmark (30/30), and runs calibration. Expected final output: Strong band, SHA-256
+        matching the locked value above.
+      </p>
+
+      <h2>Limitations</h2>
+      <p>
+        Several things are deliberately out of scope for v0.1. There is no real LLM at replay time
+        — the reference implementation uses a toy Fibonacci agent; adapting to a real LLM adapter
+        is left to the implementer. Steps are atomic: partial or streaming boundary calls are not
+        supported. Traces are linear: branching or parallel step sequences are not represented.
+        Streaming output (tokens as they arrive) is not captured. There is no compatibility with
+        OpenAI Assistants thread format or LangChain trace format. There is no key rotation or
+        record signing (signing is tracked as a v0.2 candidate via agent-reputation composition).
+        These are tracked in{' '}
+        <a href="https://github.com/Accuoa/agent-replay/blob/main/OPEN_QUESTIONS.md">OPEN_QUESTIONS.md</a>.
+      </p>
+
+      <h2>What's next</h2>
+      <p>
+        AgentReplay composes directly with three other projects in the portfolio. With{' '}
+        <a href="https://github.com/Accuoa/agent-reputation">agent-reputation</a> (Plan 8): replay
+        records become signed attestation evidence — a verifier can replay the trace and confirm
+        the signature matches, giving reputation scores that are grounded in reproducible execution
+        rather than self-report. With{' '}
+        <a href="https://github.com/Accuoa/p2p-agent-discovery">p2p-agent-discovery</a> (Plan 9):
+        a manifest can carry an <code>execution_evidence</code> field linking to a replay record,
+        so consumers can inspect a verifiable trace before deciding to invoke an agent. With{' '}
+        <a href="https://github.com/Accuoa/memorystore">memorystore</a> (Plan 1): memory reads are
+        boundaries; once memory operations are wrapped in the recorder protocol, memory-backed agents
+        become fully replayable with no special casing.
+      </p>
+      <p>
+        Likely v0.2 candidates: record signing via agent-reputation's Ed25519 scheme, a standard{' '}
+        <code>attestation_ref</code> field on replay records, parallel step support, and a streaming
+        boundary protocol. Weigh in on priorities in{' '}
+        <a href="https://github.com/Accuoa/agent-replay/blob/main/OPEN_QUESTIONS.md">OPEN_QUESTIONS.md</a>.
+      </p>
+
+      <h2>Where to find me</h2>
+      <p>
+        GitHub: <a href="https://github.com/Accuoa">@Accuoa</a> — the repo and issues live here.<br />
+        Twitter/X: <a href="https://twitter.com/aidenbolin">@aidenbolin</a> — launch thread and updates.<br />
+        dev.to: <a href="https://dev.to/accuoa">@accuoa</a> — longer write-ups cross-posted here.
+      </p>
+
+    </div>
   </article>
 </Landing>
 <SiteFooter content={content} />

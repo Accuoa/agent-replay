@@ -12,12 +12,46 @@ import { ContentSchema } from '../content/config';
 import contentJson from '../content.example.json';
 
 const content = ContentSchema.parse(contentJson);
+const pageTitle = 'AgentReplay — deterministic agent replay';
 ---
-<Landing content={content}>
+<Landing content={content} pageTitle={pageTitle}>
   <Hero content={content} />
+
+  <!-- Headline metric card -->
+  <div data-testid="metric-card" class="mb-10 rounded border border-slate-200 bg-slate-50 px-5 py-4 font-mono text-sm text-slate-700">
+    100% replay fidelity (30/30) · 0 external network calls · Strong band · 3 byte-identical runs
+  </div>
+
   <Problem content={content} />
   <Proposal content={content} />
+
+  <!-- Quick example -->
+  <section data-testid="quick-example" class="mb-10">
+    <h2 class="text-sm font-mono uppercase tracking-widest text-slate-500 mb-2">Quick example</h2>
+    <pre class="rounded border border-slate-200 bg-slate-50 px-5 py-4 font-mono text-sm overflow-x-auto"><code>{`agent-replay record src/toy-agent-cli-adapter.mjs examples/input-fibonacci.json > rec.json
+agent-replay verify src/toy-agent-cli-adapter.mjs rec.json
+agent-replay diff rec.json rec-modified.json`}</code></pre>
+  </section>
+
   <WhyNow content={content} />
+
+  <!-- Composes-with cards -->
+  <section data-testid="composes-with" class="mb-10 rounded border border-slate-200 bg-slate-50 px-5 py-4">
+    <h2 class="text-sm font-mono uppercase tracking-widest text-slate-500 mb-2">Composes with</h2>
+    <p class="text-base leading-relaxed mb-3">
+      <a href="https://github.com/Accuoa/agent-reputation" class="underline font-semibold">agent-reputation</a>
+      {' '}— signed replay records become attestation evidence; reputation scores back-propagate from verified replays.
+    </p>
+    <p class="text-base leading-relaxed mb-3">
+      <a href="https://github.com/Accuoa/p2p-agent-discovery" class="underline font-semibold">p2p-agent-discovery</a>
+      {' '}— replay traces attach to manifests as verifiable execution evidence consumers can inspect before invoking.
+    </p>
+    <p class="text-base leading-relaxed">
+      <a href="https://github.com/Accuoa/memorystore" class="underline font-semibold">memorystore</a>
+      {' '}— memory reads are boundaries; recording them makes memory-backed agents fully replayable.
+    </p>
+  </section>
+
   <PrimaryCTA content={content} />
   <EmailCapture content={content} />
   <About content={content} />

@@ -2,33 +2,33 @@
   "project": {
     "slug": "agent-replay",
     "name": "AgentReplay",
-    "statusBadge": "concept — no code yet",
+    "statusBadge": "alpha demo",
     "primaryCta": {
-      "label": "Read on GitHub",
-      "href": "https://github.com/Accuoa/agent-replay"
+      "label": "Read the spec",
+      "href": "/launch"
     }
   },
   "hero": {
-    "headline": "Placeholder — content lands when this idea ships."
+    "headline": "Record your agent. Replay byte-identical, every time."
   },
   "problem": {
-    "body": "This page is a placeholder. Real content arrives as part of this project’s launch in the next two weeks."
+    "body": "Every agent run is a one-way trip. The LLM call was non-deterministic, the clock read a different value, the third-party API response has drifted. When a bug surfaces in production you have logs — but logs are not a replay. You can’t re-run the agent’s logic against what actually happened."
   },
   "proposal": {
-    "body": "When this project ships, this section describes the proposal — what this primitive is and isn’t, in plain language."
+    "body": "AgentReplay is a primitive for deterministic agent replay. Wrap your boundary calls in the recorder, get back a portable trace. Replay it and the agent re-executes against the recorded outputs — byte-identical final output, byte-identical step sequence. Open spec, MIT-licensed, reference CLI included."
   },
   "whyNow": {
-    "body": "When this project ships, this section explains what shifted in 2025-2026 that makes this newly possible or needed."
+    "body": "Agents are shipping to production. Debugging them is still pre-industrial: re-run with the same prompt and hope for the same result. The boundary-recording pattern that makes replay possible has no standard packaging. AgentReplay is that packaging — a spec and a reference implementation any agent author can adopt today."
   },
   "cta": {
-    "headline": "Get notified when this ships.",
+    "headline": "Get notified when v0.2 ships.",
     "secondary": {
       "label": "Get updates",
       "placeholder": "your@email.com"
     }
   },
   "about": {
-    "body": "Built by Aiden. This is an exploratory project — feedback welcome.",
+    "body": "Built by Aiden as part of the Accuoa AI-agent infrastructure portfolio. Composes with agent-reputation (Plan 8, signed records), p2p-agent-discovery (Plan 9, manifest evidence), and memorystore (Plan 1, memory boundaries).",
     "githubUrl": "https://github.com/Accuoa",
     "contactUrl": "https://twitter.com/aidenbolin"
   },
