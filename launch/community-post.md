@@ -31,4 +31,4 @@ The design composes with signed attestation (Plan 8) and agent discovery (Plan 9
 Repo: https://github.com/Accuoa/agent-replay  
 Normative spec: https://github.com/Accuoa/agent-replay/blob/main/SPEC.md  
 Open questions: https://github.com/Accuoa/agent-replay/blob/main/OPEN_QUESTIONS.md  
-Apache-2.0.
+MIT.

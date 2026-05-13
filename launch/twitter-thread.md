@@ -65,5 +65,5 @@ Plan 1 (memorystore): memory reads are boundaries — replayable like any other.
 Spec, reference impl, 30-fixture benchmark, full-cycle:
 https://github.com/Accuoa/agent-replay
 
-Apache-2.0. Open questions + v0.2 candidates:
+MIT. Open questions + v0.2 candidates:
 https://github.com/Accuoa/agent-replay/blob/main/OPEN_QUESTIONS.md

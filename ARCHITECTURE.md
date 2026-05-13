@@ -79,7 +79,7 @@ REPLAY MODE
 - **Unit tests** (`tests/`) for each pure function: canonical, hash, recorder boundary logging, replayer cursor advancement, schema validation, drift category detection.
 - **Integration tests** for the toy agent + recorder/replayer round-trip.
 - **CLI tests** for `agent-replay record|verify|diff`.
-- **Benchmark suite** (`benchmark/`) — 30 fixture records covering: linear traces, branching-via-condition traces, expired-clock traces, drift-detection traces (one record paired with a deliberately-broken replay), output-only traces. Pass = byte-identical replay output across three reruns of every fixture.
+- **Benchmark suite** (`benchmark/`) — 30 fixture records covering: linear traces, rerecord traces (independent re-recording of the same input), mid-tamper traces (a middle step's input_hash mutated), output-tamper traces (final output mutated), input-tamper traces (initial input mutated to force first-step drift cascade). Pass = byte-identical replay output across three reruns of every fixture.
 - **Calibration script** (`benchmark/calibrate.sh`) — three byte-identical runs of the full benchmark.
 
 ## Headline metric

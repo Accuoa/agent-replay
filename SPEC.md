@@ -124,7 +124,7 @@ Implementations SHOULD provide lint rules or runtime guards that flag direct non
 
 ## Test vectors
 
-The reference implementation ships 30 recorded sessions of a toy agent under [benchmark/data/](./benchmark/data/) along with golden replay outputs. Each fixture covers a specific replay scenario (linear, branching-via-condition, expired-clock, drift-detection, output-only).
+The reference implementation ships 30 recorded sessions of a toy agent under [benchmark/data/](./benchmark/data/) along with golden replay outputs. The 30 fixtures cover 5 verification scenarios (linear, rerecord, mid-tamper, output-tamper, input-tamper).
 
 ## Reference implementation
 

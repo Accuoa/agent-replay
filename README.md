@@ -9,8 +9,8 @@ Read the [spec](./SPEC.md) for the normative trace format and replay protocol. T
 ## Quick example
 
 ```bash
-agent-replay record src/toy-agent.mjs examples/input-fibonacci.json > rec.json
-agent-replay verify rec.json
+agent-replay record src/toy-agent-cli-adapter.mjs examples/input-fibonacci.json > rec.json
+agent-replay verify src/toy-agent-cli-adapter.mjs rec.json
 agent-replay diff rec.json rec-modified.json
 ```
 
